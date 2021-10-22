@@ -25,27 +25,50 @@ class GameBlackJack(TwoPlayerGame):
         player 1 has ended the game (lost or won)
     finish_player_2 : bool
         player 1 has ended the game (lost or won)
-
-
     '''
 
-    # THE PLANNING PHASE
 
     def __init__(self, players):
+        '''
+        Constructs all the necessary attributes for the GameBlackJack object and initialization of the game.
+        
+        Parameters
+        ----------
+        players : list
+            list of players [Human_Player, AI_Player]
+        cards_value_player : int
+            starting total after the deal to the first player
+        cards_value_player_2 : int
+            starting total after the deal to the second player
+        current_player : int
+            declaration of which player started the game
+            returns the current player to whom the move belongs
+        finish_player_1 : bool
+            player 1 has ended the game (lost or won)
+        finish_player_2 : bool
+            player 1 has ended the game (lost or won)
+        '''
+        
         self.players = players
         self.cards_value_player = random.randint(1, 11)   # start with 2 random cards
         self.cards_value_player_2 = random.randint(1, 11)  # start with 2 random cards
-        self.current_player = 1  # player 1 starts
+        self.current_player = 2  # AI starts
         self.finish_player_1 = False
         self.finish_player_2 = False
 
-    '''
-    return all posible moves
-    1 - hit card
-    2 - stop taking card
-    '''
 
     def possible_moves(self):
+        '''
+        Return all posible moves
+
+        Returns
+        -------
+        list
+            1 or 2.
+                1 - hit card
+                2 - stop taking card
+        '''
+        
         if self.current_player == 1 and self.finish_player_1:
             return [2]
         elif self.current_player == 2 and self.finish_player_2:
@@ -53,13 +76,20 @@ class GameBlackJack(TwoPlayerGame):
         else:
             return [1, 2]
 
-    '''
-    make move
-    1 - take card and add to your card value
-    2 - stop taking card for the rest of a game
-    '''
+
 
     def make_move(self, move):
+        '''
+        Transforms the game according to the move.
+
+        Parameters
+        ----------
+        move : int
+            Move can be 1 or 2.
+            1 - take card and add to your card value
+            2 - stop taking card for the rest of a game
+        '''
+        
         if self.current_player == 1 and not self.finish_player_1:
             if move == 1:
                 self.cards_value_player += random.randint(1, 11)  # add radnom card.
@@ -71,27 +101,42 @@ class GameBlackJack(TwoPlayerGame):
             else:
                 self.finish_player_2 = True
 
-    '''
-    game is over when someone has more than 21 card value or both players stop taking cards
-    '''
+
 
     def is_over(self):
-        return (self.finish_player_1 and self.finish_player_2) or (
-                self.cards_value_player > 21 or self.cards_value_player_2 > 21)
+        '''
+        The function checks if the game is over
 
-    '''
-    show communicate after before play
-    '''
+        Returns
+        -------
+        Bool
+            Game is over when someone has more than 21 card value or both players stop taking cards
+        '''
+        
+        return (self.finish_player_1 and self.finish_player_2) or (
+                self.cards_value_player > 21 or self.cards_value_player_2 >= 21)
+
+
 
     def show(self):
+        '''
+        Show communicate before play
+        '''
+        
         print(str(self.cards_value_player) + " cards value in your hand, and " + str(
             self.cards_value_player_2) + " value in ai hand. Press 1 to hit or 2 to stay")
 
-    '''
-    help ai to make correct play
-    '''
 
     def scoring(self):
+        '''
+        Gives a score to the current game. Help ai to make correct play
+
+        Returns
+        -------
+        int
+            adds or subtracts points
+
+        '''
         if self.current_player == 2:
             if (self.cards_value_player_2 > self.cards_value_player) and self.finish_player_1:
                 return 21
@@ -113,6 +158,9 @@ class GameBlackJack(TwoPlayerGame):
                 return self.cards_value_player
 
 
-ai = Negamax(6)
+ai = Negamax(10)
+'''
+The Negamax algorithm always looks for the shortest path to victory, or the longest path to defeat
+'''
 game = GameBlackJack([Human_Player(), AI_Player(ai)])
 history = game.play()
