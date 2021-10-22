@@ -34,14 +34,22 @@ class GameBlackJack(TwoPlayerGame):
         self.cards_value_player = random.randint(1, 11) + random.randint(1, 11)  # start with 2 random cards
         self.cards_value_player_2 = random.randint(1, 11) + random.randint(1, 11)  # start with 2 random cards
         self.current_player = 1  # player 1 starts
-        self.nplayer = 1  # player 1 starts
         self.finish_player_1 = False
         self.finish_player_2 = False
-        print(type(players))
 
+    '''
+    return all posible moves
+    1 - hit card
+    2 - stop taking card
+    '''
     def possible_moves(self):
         return [1, 2]
 
+    '''
+    make move
+    1 - take card and add to your card value
+    2 - stop taking card for the rest of a game
+    '''
     def make_move(self, move):
         if self.current_player == 1 and not self.finish_player_1:
             if move == 1:
@@ -53,40 +61,35 @@ class GameBlackJack(TwoPlayerGame):
                 self.cards_value_player_2 += random.randint(1, 11)  # add radnom card.
             else:
                 self.finish_player_2 = True
-
+    '''
+    game is over when someone has more than 21 card value or both players stop taking cards
+    '''
     def is_over(self):
-        return (self.finish_player_1 and self.finish_player_2) or (self.cards_value_player > 21 or self.cards_value_player_2 > 21)
-
+        return (self.finish_player_1 and self.finish_player_2) or (
+                    self.cards_value_player > 21 or self.cards_value_player_2 > 21)
+    '''
+    show communicate after before play
+    '''
     def show(self):
-        print( str(self.cards_value_player) + " cards value in your hand, and " + str(self.cards_value_player_2) + " value in ai hand. Press 1 to hit or 2 to stay")
-
+        print(str(self.cards_value_player) + " cards value in your hand, and " + str(
+            self.cards_value_player_2) + " value in ai hand. Press 1 to hit or 2 to stay")
+    '''
+    help ai to make correct decision
+    '''
     def scoring(self):
-        if self.cards_value_player_2 == 21:
-            return 100
-        elif self.cards_value_player_2 == 20:
-            return 90
-        elif self.cards_value_player_2 == 19:
-            return 80
-        elif self.cards_value_player_2 == 18:
-            return 80
-        elif self.cards_value_player_2 == 17:
-            return 70
-        elif self.cards_value_player_2 == 16:
-            return 60
-        elif self.cards_value_player_2 == 15:
-            return 50
-        elif self.cards_value_player_2 == 14:
-            return 40
-        elif self.cards_value_player_2 == 13:
-            return 30
-        elif self.cards_value_player_2 == 12:
-            return 20
-        elif self.cards_value_player_2 == 11:
-            return 10
-        else:
-            return 0
+        if self.current_player == 2:
+            if self.cards_value_player_2 > 21:
+                return -100
+            else:
+                return self.cards_value_player_2
+
+        if self.current_player == 1:
+            if self.cards_value_player > 21:
+                return -100
+            else:
+                return self.cards_value_player
 
 
-ai = Negamax(11, win_score=70)
+ai = Negamax(4)
 game = GameBlackJack([Human_Player(), AI_Player(ai)])
 history = game.play()
